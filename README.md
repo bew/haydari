@@ -31,9 +31,9 @@ class BrainfuckParser
     # Since Proc's return type is NoReturn for recursives recursion 
     # is disabled for now
     def parse_program
-        start_t      = string("[").maybe
-        commands   = parse_command.many
-        end_t        = string("]").maybe
+        start_t  = string("[").maybe
+        commands = parse_command.many
+        end_t    = string("]").maybe
 
         (start_t >> commands << end_t).select { |cmds| BrainfuckProgram.new cmds }
     end
