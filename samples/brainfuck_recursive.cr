@@ -80,11 +80,13 @@ class BrainfuckParser
     # Since Proc's return type is NoReturn for recursives recursion 
     # is disabled for now
     def parse_program
-        start_t  = string("[").maybe
-        commands = parse_commands
-        end_t    = string("]").maybe
+        start_t      = string("[").maybe
+        commands     = parse_commands
+        sub_programs = (recurse parse_program).many
+        commands2    = parse_commands
+        end_t        = string("]").maybe
 
-        (start_t >> commands << end_t).select { |cmds| BrainfuckProgram.new cmds }
+        (start_t >> (commands + sub_programs + commands2) << end_t).select { |cmds| BrainfuckProgram.new cmds }
     end
 
     def parse(input : String)
@@ -97,6 +99,6 @@ class BrainfuckParser
 end
 
 bf = BrainfuckParser.new
-program = bf.parse("[--++,.,.<-+.,]") # doesn't mean anything
+program = bf.parse("[--++[,,,..--],.,.<-+.,]") # doesn't mean anything
 (program as BrainfuckProgram?).try &.pretty_print
 
