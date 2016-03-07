@@ -25,26 +25,22 @@ class BrainfuckParser
 
     def parse_command
         parser = one_of("><+-.,")
-        return parser.select { |t| BrainfuckTokens.from_string(t) }
+        return parser.select { |t| BrainfuckToken.from_string(t.to_s) }
     end
 
-    def parse_program : Parser(BrainfuckProgram)
-        start_t = string("[")
-        
-        commands_1   = parse_command.many
-        sub_programs = recurse parse_program
-        commands_2   = parse_command.many
+    # Since Proc's return type is NoReturn for recursives recursion 
+    # is disabled for now
+    def parse_program
+        start_t      = string("[").maybe
+        commands   = parse_command.many
+        end_t        = string("]").maybe
 
-        program      = commands_1 + sub_programs + commands_2
-        program      = program.select { |p| BrainfuckProgram.new p.concat }
-
-        end_t = string("]")
-
-        (start_t > program < end_t)
+        (start_t >> commands << end_t).select { |cmds| BrainfuckProgram.new cmds }
     end
 
     def parse(input : String)
         parser = parse_program
+
         if parser.run(input)
             parser.output
         end
