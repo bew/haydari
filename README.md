@@ -29,7 +29,7 @@ class BrainfuckParser
     end
 
     # Since Proc's return type is NoReturn for recursives recursion 
-    # is disabled for now
+    # is not possible right now.
     def parse_program
         start_t  = string("[").maybe
         commands = parse_command.many
