@@ -1,6 +1,6 @@
 require "../parser"
 
-class Haydari::SatisfyParser < Haydari::Parser(Char)
+class Haydari::SatisfyParserChar < Haydari::Parser(Char)
     property predicate
 
     def initialize(&predicate : Char -> Bool)

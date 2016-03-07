@@ -19,7 +19,7 @@ module Haydari
     end
 
     def digit
-        SatisfyParser.new &.digit?
+        SatisfyParserChar.new &.digit?
     end
 
     def string(str : String)
@@ -59,7 +59,11 @@ module Haydari
     end
 
     def one_of(s : String)
-        SatisfyParser.new { |c| s.includes?(c) }
+        SatisfyParserString.new { |c| s.includes?(c) }
+    end
+
+    def one_of_c(s : String)
+        SatisfyParserChar.new { |c| s.includes?(c) }
     end
 
     macro flatten(rest)
