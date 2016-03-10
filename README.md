@@ -13,11 +13,49 @@ dependencies:
     github: umurgdk/haydari
 ```
 
+## TODO
+
+- [ ] Support `IO` as `ParserInput`
 
 ## Usage
+Parser combinators make easy to build complex parsers without dealing with so much hassle. Instead of trying to build one big monolithic parser, making small and composeable parsers and combining them together is way of writing parsers in parser combinators. Haydari gives you smallest parsers like *parse a character*, *parse a whitespace*, etc. and tons of combinators like *many*, *not*, *then* to give them a meaning.
 
+### 1. Creating a parser
+
+Let's start writing with simplest parser. Our parser going to read one **space** character and done.
 
 ```crystal
+require "haydari"
+
+class MyParser
+    include Haydari
+
+    defparser space, Char do
+        char(' ')
+    end
+end
+
+my_parser = MyParser.new.space
+my_parser.run("       ")
+puts "'#{my_parser.output}'" # prints a space character => ' '
+```
+
+Here `defparser` takes a **name** and a **type** of the value we're going to parse. Since we're using char parser it results in char value. As you can see calling space method is not running the parser, instead it builds a parser instance to run later on. 
+
+But why we get only **one** space character even we pass a string which has more than one space characters? `char` parser reads a character from it's input and then success or fail. `char` parser don't know anything about how many times it should try to parse or what to do next. But **combinators** does. There are lots of combinators builtin Haydari but most known one is called `many`. `many` takes a parser and trying to run that parser until it fails. Let's parse multiple space characters.
+
+```crystal
+# notice Array(Char)
+defparser space, Array(Char) do
+    many char(' ')
+end
+```
+
+Now if we run our parser again output should be `'[' ', ' ', ' ']'`. First thing you should notice our parser's type is changed to `Array(Char)`. This is result of *many* combinator. *many* combinator takes a parser and run it multiple times and collect all the successful results. Because of that its value going to be array of values. You may expect `many char(' ')` to be resulted in `String`, but that's not true. Since *many* combinator take any kind of parser, the parser you give to *many* combinator may not result into character.
+
+```crystal
+require "haydari"
+
 class JSONParser
     include Haydari
 
