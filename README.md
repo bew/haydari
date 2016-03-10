@@ -42,7 +42,7 @@ puts "'#{my_parser.output}'" # prints a space character => ' '
 
 Here `defparser` takes a **name** and a **type** of the value we're going to parse. Since we're using char parser it results in char value. As you can see calling space method is not running the parser, instead it builds a parser instance to run later on. 
 
-But why we get only **one** space character even we pass a string which has more than one space characters? `char` parser reads a character from it's input and then success or fail. `char` parser don't know anything about how many times it should try to parse or what to do next. But **combinators** does. There are lots of combinators builtin Haydari but most known one is called `many`. `many` takes a parser and trying to run that parser until it fails. Let's parse multiple space characters.
+But why we get only **one** space character even we pass a string which has more than one space characters? `char` parser reads a character from it's input and then success or fail. `char` parser don't know anything about how many times it should try to parse or what to do next. But **combinators** does. There are lots of combinators builtin Haydari but most known one is called `many`. `many` takes a parser and tries to run that parser until it fails. Let's parse multiple space characters.
 
 ```crystal
 # notice Array(Char)
