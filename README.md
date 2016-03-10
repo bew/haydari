@@ -51,7 +51,7 @@ defparser space, Array(Char) do
 end
 ```
 
-Now if we run our parser again output should be `'[' ', ' ', ' ']'`. First thing you should notice our parser's type is changed to `Array(Char)`. This is result of *many* combinator. *many* combinator takes a parser and run it multiple times and collect all the successful results. Because of that its value going to be array of values. You may expect `many char(' ')` to be resulted in `String`, but that's not true. Since *many* combinator take any kind of parser, the parser you give to *many* combinator may not result into character.
+Now if we run our parser again output should be `'[' ', ' ', ' ']'`. First thing you should notice our parser's type is changed to `Array(Char)`. This is result of *many* combinator. *many* combinator takes a parser and run that parser multiple times and collect all the successful results. Because of that its value going to be array of values. You may expect `many char(' ')` to be resulted in `String`, but that's not true. Since *many* combinator take any kind of parser, the parser you give to *many* combinator may not result into character.
 
 ```crystal
 require "haydari"
