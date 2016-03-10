@@ -1,17 +1,14 @@
 require "../parser"
 
-class Haydari::OrParser(T) < Haydari::Parser(T)
-    def initialize(@parsers : Array(Parser(T)))
-        @output = [] of T
+class Haydari::OrParser(T,U) < Haydari::Parser(T | U)
+    def initialize(@parser1 : Parser(T), @parser2 : Parser(U))
+        @output = [] of (T | U)
     end
 
     def reset
-        @output = [] of T
-        @parsers.each &.reset
-    end
-
-    def push_parser(parser : Parser(T))
-        @parsers << parser
+        @output = [] of (T | U)
+        @parser1.reset
+        @parser2.reset
     end
 
     def output
@@ -19,14 +16,24 @@ class Haydari::OrParser(T) < Haydari::Parser(T)
     end
 
     def parse(input)
-        raise Exception.new("No parsers given for or operation") if @parsers.empty?
+        input.mark
 
-        @parsers.each do |parser|
-            if parser.run(input)
-                @output = [parser.output.not_nil!]
-                return true
-            end
+        if @parser1.run(input)
+            input.unmark
+            @output << T.cast(@parser1.output.not_nil!)
+            return true
         end
+
+        input.rewind
+        input.mark
+
+        if @parser2.run(input)
+            input.unmark
+            @output << U.cast(@parser2.output.not_nil!)
+            return true
+        end
+
+        input.rewind
 
         false
     end

@@ -6,6 +6,10 @@ module Haydari
         select parser, &.join
     end
 
+    def number
+        SatisfyParserString.new(&.digit?).at_least_one.text.select &.to_i
+    end
+
     def any
         SatisfyParser.new { true }
     end
@@ -38,12 +42,24 @@ module Haydari
         ThenParser.new(parser, &block)
     end
 
-    def return(val)
+    def then(&block : -> Parser(T))
+        block.call()
+    end
+
+    def return_(val)
         ReturnParser.new val
     end
 
+    def index_of(str : String)
+        one_of(str).select &->str.index(String)
+    end
+
+    def token_c(str : String, val)
+        StringParser.new(str) >> return_ val
+    end
+
     def ws
-        SatisfyParser.new &.whitespace?
+        SatisfyParserString.new &.whitespace?
     end
 
     def not(p : Parser(T))
@@ -62,6 +78,10 @@ module Haydari
         SatisfyParserString.new { |c| s.includes?(c) }
     end
 
+    def none_of(s : String)
+        SatisfyParserString.new { |c| !s.includes?(c) }
+    end
+
     def one_of_c(s : String)
         SatisfyParserChar.new { |c| s.includes?(c) }
     end
@@ -74,7 +94,26 @@ module Haydari
         {{"(".id}}{{rest}}{{")".id}}.select {{transformer.id}}
     end
 
-    macro recurse(name)
-        {{"ClosureParser.new(->self.".id}}{{name.id}}{{")".id}}
+    macro defparser(name, type, &block)
+        class Parser___{{name}} < ParserGenerator({{type}})
+            include Haydari
+
+            def initialize(@owner)
+            end
+
+            forward_missing_to @owner
+
+            def {{name}}
+                RecurseParser({{type}}).new(Parser___{{name}}.new(@owner))
+            end
+
+            def generate
+                {{block.body}}
+            end
+        end
+
+        def {{name}}
+            RecurseParser({{type.id}}).new(Parser___{{name}}.new(self))
+        end
     end
 end

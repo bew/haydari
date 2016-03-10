@@ -9,94 +9,43 @@ enum BrainfuckToken
     Dec
     Output
     Store
-
-    def self.from_string(str : String)
-        case str
-        when "["
-            BlockStart
-        when "]"
-            BlockEnd
-        when ">"
-            Next
-        when "<"
-            Previous
-        when "+"
-            Inc
-        when "-"
-            Dec
-        when "."
-            Output
-        when ","
-            Store
-        else
-            BlockStart
-        end
-    end
-
-    def self.to_string(token : BrainfuckToken)
-        case token
-        when Next
-            ">"
-        when Previous
-            "<"
-        when Inc
-            "+"
-        when Dec
-            "-"
-        when Output
-            "."
-        when Store
-            ","
-        else
-            ">"
-        end
-    end
 end
 
+alias BrainfuckProgramInput = Array(BrainfuckProgram | BrainfuckToken)
 class BrainfuckProgram
-    def initialize(@commands = [] of BrainfuckToken | self)
-    end
+    IDENTATION = "    "
 
-    def pretty_print(identation = 0)
-        puts " " * identation + "["
-        @commands.each do |c|
-            if c.is_a?(BrainfuckProgram)
-                c.pretty_print(identation + 1)
-            else
-                puts (" " * identation) + "    " + BrainfuckToken.to_string c
-            end
-        end
-        puts " " * identation + "]"
+    getter commands
+
+    def initialize(@commands = [] of BrainfuckToken | self)
     end
 end
 
 class BrainfuckParser
     include Haydari
 
-    def parse_commands
-        one_of("><+-.,").many.select &.map(&->BrainfuckToken.from_string(String))
+    defparser commands, BrainfuckToken do
+        index_of("><+-.,").to_enum BrainfuckToken
     end
 
-    # Since Proc's return type is NoReturn for recursives recursion 
-    # is disabled for now
-    def parse_program
-        start_t  = string("[").maybe
-        commands = parse_commands
-        end_t    = string("]").maybe
+    defparser program, BrainfuckProgram do
+        sub_programs = string("[") >> program << string("]")
 
-        (start_t >> commands << end_t).select { |cmds| BrainfuckProgram.new cmds }
+        (commands | sub_programs).many.select do |program|
+            BrainfuckProgram.new(program)
+        end
     end
 
     def parse(input : String)
-        parser = parse_program
-
+        parser = program
         if parser.run(input)
             parser.output
+        else
+            raise "Failed"
         end
     end
 end
-
+ 
 bf = BrainfuckParser.new
-program = bf.parse("[--++,.,.<-+.,]") # doesn't mean anything
-(program as BrainfuckProgram?).try &.pretty_print
-
+program = bf.parse("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
+pp program

@@ -1,23 +1,5 @@
-# haydari (WIP)
+require "../src/haydari"
 
-Parser combinator library for crystal-lang,
-
-## Installation
-
-
-Add this to your application's `shard.yml`:
-
-```yaml
-dependencies:
-  haydari:
-    github: umurgdk/haydari
-```
-
-
-## Usage
-
-
-```crystal
 class JSONParser
     include Haydari
 
@@ -76,20 +58,3 @@ end
 json_parser = JSONParser.new
 hash = json_parser.run("{\"hello\" : \"world\", \"arr\":\n [1, 2, 3, true, {\"sub\"   : \"gell\"}]}")
 puts hash.inspect
-```
-
-## Development
-
-TODO: Write development instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/umurgdk/haydari/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create a new Pull Request
-
-## Contributors
-
-- umurgdk(https://github.com/umurgdk) Umur Gedik - creator, maintainer

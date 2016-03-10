@@ -7,7 +7,7 @@ class Haydari::ManyParser(T) < Haydari::Parser(Array(T))
 
     def parse(input)
         while @parser.run(input) && @output.size < @limit
-            @output << @parser.output
+            @output << @parser.output.not_nil! as T
             @parser.reset
         end
 

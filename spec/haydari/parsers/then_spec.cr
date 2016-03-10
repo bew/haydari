@@ -27,7 +27,7 @@ describe Haydari::ThenParser do
         parser2 = haydari.then(left_bracket) do |lb|
             haydari.then(commands) do |cmds|
                 haydari.then(right_bracket) do
-                    haydari.return cmds
+                    haydari.return_ cmds
                 end
             end
         end

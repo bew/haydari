@@ -2,11 +2,12 @@ require "../parser"
 
 class Haydari::PlusParser(T,U) < Haydari::Parser(Array(T | U))
     def initialize(@parser1 : Parser(T), @parser2 : Parser(U))
-        @output = [] of T | U
+        @output = Array(U | T).new
         @mergeable = false
     end
 
     def reset
+        @output = Array(U | T).new
         @parser1.reset
         @parser2.reset
     end

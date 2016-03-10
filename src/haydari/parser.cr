@@ -7,7 +7,10 @@ abstract class Haydari::Parser(T)
     end
 
     def run(input : ParserInput)
-        run_parser(self, input)
+        unless run_parser(self, input)
+            return false
+        end
+        return true
     end
 
     def run(input_str : String)
@@ -30,21 +33,36 @@ abstract class Haydari::Parser(T)
         ManyParser.new(self, 1)
     end
 
+    def then(&block : T -> Parser(U))
+        ThenParser.new(self) { |o| block.call(o) }
+    end
+
+    def return(val)
+        ThenParser.new(self) { |_| ReturnParser.new val }
+    end
+
+    def text
+        ThenParser.new(self) { |str_arr| ReturnParser.new str_arr.join }
+    end
+
     def not
         NotParser.new(self)
+    end
+
+    def to_enum(type)
+        ThenParser.new(self) { |o| ReturnParser.new type.new(o.not_nil!) }
     end
 
     def flatten
         select &.flatten
     end
 
-    def |(other : Parser(U))
-        if self.is_a?(ParserOr)
-            self.push_parser(other)
-            self
-        else
-            OrParser.new([self, other])
-        end
+    def sep(parser : Parser(U))
+        SeparatedByParser.new(self, parser)
+    end
+
+    def |(other : Parser(T | U))
+        OrParser.new(self, other)
     end
 
     def +(other : Parser(U))
