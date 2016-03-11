@@ -1,5 +1,6 @@
 require "spec"
 require "../src/haydari"
+require "./dummy_classes/*"
 
 class HaydariM
     include Haydari

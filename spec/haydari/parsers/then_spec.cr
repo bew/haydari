@@ -4,46 +4,32 @@ describe Haydari::ThenParser do
     haydari = get_haydari
     input   = "1234567890"
 
-    it "should run given parser first" do
-        digit = haydari.digit
-        char  = haydari.char '2'
+    it "should run first parser then second one if first success" do
+        seconds_parser_ran = false
+        parser = haydari.digit >> haydari.return_(true)
 
-        then = Haydari::ThenParser.new(digit) do |o| 
-            o.should eq '1'
-            char
-        end
+        parser.run(input)
+        parser.output.should be_true
+    end
 
-        then.is_a?(Haydari::Parser(Char)).should be_true
+    it "should success if both parsers are success" do
+        parser1 = haydari.digit >> haydari.digit
+        parser1.run(input).should be_true
 
-        then.run(input).should be_true
-        then.output.should eq '2'
+        parser2 = haydari.digit >> haydari.char('a')
+        parser2.run(input).should be_false
+
+        parser3 = haydari.char('a') >> haydari.digit
+        parser3.run(input).should be_false
     end
 
     it "should run parsers left to right when it is nested" do
         left_bracket  = haydari.string("[")
         right_bracket = haydari.string("]")
-        commands      = haydari.one_of(",.<>-+").many.select { |cmds| cmds.map { 1 } }
+        commands      = haydari.one_of(",.<>-+").return(1).many
 
-        parser2 = haydari.then(left_bracket) do |lb|
-            haydari.then(commands) do |cmds|
-                haydari.then(right_bracket) do
-                    haydari.return_ cmds
-                end
-            end
-        end
-
-        parser2.run("++--,,..<>").should be_false
-
-        parser2.reset
-        parser2.run("[++--,,..<>]").should be_true
-        parser2.output.should eq [1] * 10
-
-        parser2 = left_bracket >> commands << right_bracket
-        parser2.reset
-        parser2.run("---+++,.").should be_false
-
-        parser2.reset
-        parser2.run("[++--,,..<>]").should be_true
-        parser2.output.should eq [1] * 10
+        parser = left_bracket >> commands >> right_bracket
+        parser.run("[+-,]").should be_true
+        parser.output.should eq "]"
     end
 end
