@@ -25,6 +25,7 @@ Parser combinators make easy to build complex parsers without dealing with so mu
 Let's start writing with simplest parser. Our parser going to read one **space** character and done.
 
 ```crystal
+# samples/tutorial/1-char.cr
 require "haydari"
 
 class MyParser
@@ -45,6 +46,8 @@ Here `defparser` takes a **name** and a **type** of the value we're going to par
 But why we get only **one** space character even we pass a string which has more than one space characters? `char` parser reads a character from it's input and then success or fail. `char` parser don't know anything about how many times it should try to parse or what to do next. But **combinators** does. There are lots of combinators builtin Haydari but most known one is called `many`. `many` takes a parser and tries to run that parser until it fails. Let's parse multiple space characters.
 
 ```crystal
+# samples/tutorial/2-many-chars.cr
+
 # notice Array(Char)
 defparser space, Array(Char) do
     many char(' ')
