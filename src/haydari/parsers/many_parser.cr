@@ -2,6 +2,10 @@ require "../parser"
 
 class Haydari::ManyParser(T) < Haydari::Parser(Array(T))
     def initialize(@parser : Parser(T), @at_least = 0, @limit = Int32::MAX)
+        if @parser.is_a?(ManyParser)
+            raise "Using many parser inside a many parser is not allowed!"
+        end
+
         @output = [] of T
     end
 

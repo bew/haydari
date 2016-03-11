@@ -10,5 +10,12 @@ describe Haydari::ManyParser do
         parser.run(input).should be_true
         parser.output.should eq [] of Char
     end
+
+    it "should raise an error if the given parser is also many" do
+        expect_raises do
+            many = Haydari::ManyParser.new(Haydari::CharParser.new('1'))
+            wrapper = Haydari::ManyParser.new(many)
+        end
+    end
 end
 
