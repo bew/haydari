@@ -73,8 +73,16 @@ abstract class Haydari::Parser(T)
         ThenParser.new(self) { |o| ThenParser.new(other) { |x| ReturnParser.new o } }
     end
 
+    def <<(str : String)
+        self << StringParser.new(str)
+    end
+
     def >>(other : Parser(U))
         ThenParser.new(self) { |o| other }
+    end
+
+    def >>(str : String)
+        self >> StringParser.new(str)
     end
 
     private def run_parser(parser, input)
