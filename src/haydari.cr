@@ -14,6 +14,10 @@ module Haydari
         SatisfyParser.new { true }
     end
 
+    def spaces
+        ws.many
+    end
+
     def char(c : Char)
         CharParser.new c
     end
