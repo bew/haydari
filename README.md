@@ -51,7 +51,7 @@ defparser space, Array(Char) do
 end
 ```
 
-Now if we run our parser again output will be `'[' ', ' ', ' ']'`. First thing you should notice our parser's type is changed to `Array(Char)`. This is result of *many* combinator. *many* combinator takes a parser and run that parser until it fails and collect all the results. Because of that its value going to be array of values. You may expect `many char(' ')` to be resulted in `String`, but that's not true. Since *many* combinator take any kind of parser, the parser you give to *many* combinator may not result into character.
+Now if we run our parser again output will be `'[' ', ' ', ' ']'`. First thing you should notice our parser's type is changed to `Array(Char)`. This is result of *many* combinator. *many* combinator takes a parser and run that parser until it fails and collect all the results. Because of that its value going to be array of values. You may expect `many char(' ')` to be resulted in `String`, but that's not true. Since *many* combinator could take any kind of parser, the parser you gave may not result into character.
 
 ### 2. Parsing comma separated array of strings
 
