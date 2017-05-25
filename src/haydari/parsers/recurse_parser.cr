@@ -1,8 +1,9 @@
 require "../parser"
 
 class Haydari::RecurseParser(T) < Haydari::Parser(T)
+  @parser : Parser(T)?
+
     def initialize(@generator : ParserGenerator(T))
-        @parser = nil
         @output = [] of T
     end
 

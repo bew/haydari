@@ -20,7 +20,7 @@ class Haydari::ParserInput
 
     @length  = 0
 
-    def initialize(@input)
+    def initialize(@input : String)
         @length = @input.size
     end
 

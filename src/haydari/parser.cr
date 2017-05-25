@@ -17,7 +17,7 @@ abstract class Haydari::Parser(T)
         run_parser(self, ParserInput.new(input_str))
     end
 
-    def select(&block : T -> U)
+    def select(&block : T -> U) forall U
         ThenParser.new(self) { |o| ReturnParser.new block.call(o) }
     end
 
@@ -33,7 +33,7 @@ abstract class Haydari::Parser(T)
         ManyParser.new(self, 1)
     end
 
-    def then(&block : T -> Parser(U))
+    def then(&block : T -> Parser(U)) forall U
         ThenParser.new(self) { |o| block.call(o) }
     end
 
@@ -54,22 +54,22 @@ abstract class Haydari::Parser(T)
     end
 
     def flatten
-        select &.flatten
+      self.select &.flatten
     end
 
-    def sep(parser : Parser(U))
+    def sep(parser : Parser(U)) forall U
         SeparatedByParser.new(self, parser)
     end
 
-    def |(other : Parser(T | U))
+    def |(other : Parser(T | U)) forall U
         OrParser.new(self, other)
     end
 
-    def +(other : Parser(U))
+    def +(other : Parser(U)) forall U
         PlusParser.new(self, other)
     end
 
-    def <<(other : Parser(U))
+    def <<(other : Parser(U)) forall U
         ThenParser.new(self) { |o| ThenParser.new(other) { |x| ReturnParser.new o } }
     end
 
@@ -77,7 +77,7 @@ abstract class Haydari::Parser(T)
         self << StringParser.new(str)
     end
 
-    def >>(other : Parser(U))
+    def >>(other : Parser(U)) forall U
         ThenParser.new(self) { |o| other }
     end
 

@@ -3,7 +3,7 @@ require "./haydari/parsers/*"
 
 module Haydari
     def text(parser)
-        select parser, &.join
+      self.select parser, &.join
     end
 
     def number
@@ -102,7 +102,7 @@ module Haydari
         class Parser___{{name}} < ParserGenerator({{type}})
             include Haydari
 
-            def initialize(@owner)
+            def initialize(@owner : Haydari)
             end
 
             forward_missing_to @owner
